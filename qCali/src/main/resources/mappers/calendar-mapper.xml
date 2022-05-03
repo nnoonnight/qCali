@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+
+<mapper namespace="CalendarDao">
+	<select id="calendarList"
+		resultType="com.group.exam.calendar.vo.CalendarVo">
+		select calendar.calendar_seq, calendar.board_seq, 
+		to_char(calendar.calendar_day, 'yyyy-mm-dd') calendar_day,
+		(select count(*) from board where
+		to_char(board.board_reg_day,'yymmdd') =
+		to_char(calendar.calendar_day,'yymmdd')) as count from calendar
+	</select>
+
+	<select id="boardByDate" parameterType="java.util.HashMap"
+		resultType="com.group.exam.calendar.vo.CalendarBoardVo">		
+		<![CDATA[
+			select * from
+			(select ROWNUM rn, B.BOARD_SEQ, B.BOARD_TITLE, M.MEMBER_NICKNAME, B.BOARD_COUNT, B.BOARD_LIKE
+			from MEMBER M
+			right join BOARD B
+			on M.MEMBER_SEQ = B.MEMBER_SEQ
+			where TO_char(B.BOARD_REG_DAY, 'YYMMDD') = #{date} ORDER BY BOARD_SEQ DESC)
+ 			where rn BETWEEN #{rowStart} and #{rowEnd} 
+ 			 
+		]]>
+	</select>
+	<select id="boardByDateTotal" resultType="Integer">
+		<![CDATA[
+			select count(*) FROM board where TO_char(BOARD_REG_DAY, 'YYMMDD') = #{date}
+		]]>
+	</select>
+
+	<insert id="insertCalendar" parameterType="Long">
+		insert into
+		calendar(calendar_seq, board_seq, calendar_day) values(c_seq.nextval,
+		#{currentSeq}, sysdate)
+	</insert>
+
+
+</mapper>

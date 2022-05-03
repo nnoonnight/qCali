@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="DiaryDao">
+	<insert id="insertDiary" parameterType="com.group.exam.diary.vo.DiaryVo">
+		<if test="diaryImg != null">
+		insert into DIARY
+		(DIARY_SEQ, DIARY_TITLE, DIARY_CONTENT,DIARY_REG_DAY, DIARY_OPEN, MEMBER_SEQ, DIARY_IMG)
+		values
+		(DIARY_SEQ.nextval, #{diaryTitle}, #{diaryContent}, SYSDATE, #{diaryOpen},
+		(select MEMBER_SEQ from MEMBER where MEMBER_SEQ = #{memberSeq}), #{diaryImg})
+		</if>
+		<if test="diaryImg == null">
+		insert into DIARY
+		(DIARY_SEQ, DIARY_TITLE, DIARY_CONTENT,DIARY_REG_DAY, DIARY_OPEN, MEMBER_SEQ, DIARY_IMG)
+		values
+		(DIARY_SEQ.nextval, #{diaryTitle}, #{diaryContent}, SYSDATE, #{diaryOpen},
+		(select MEMBER_SEQ from MEMBER where MEMBER_SEQ = #{memberSeq}), NULL)
+		</if>
+	</insert>
+
+
+
+	<update id="updateDiary" parameterType="HashMap">
+		update DIARY set
+		DIARY_TITLE = #{diaryTitle}, DIARY_CONTENT = #{diaryContent}, DIARY_OPEN = #{diaryOpen}, DIARY_IMG = #{diaryImg} where DIARY_SEQ = #{diarySeq}
+	</update>
+
+	<delete id="deleteDiary" parameterType="HashMap">
+		delete from DIARY
+		where DIARY_SEQ = #{diarySeq} and MEMBER_SEQ = #{memberSeq}
+	</delete>
+
+	<update id="deleteDiaryImg" parameterType="Long">
+		update DIARY set
+		DIARY_IMG = NULL where  DIARY_SEQ = #{diarySeq}
+	</update>
+
+	<!-- memberseq 의 게시글 목록 -->
+	<select id="diaryList" parameterType="com.group.exam.utils.Criteria" resultType="com.group.exam.diary.command.DiaryListCommand">
+	
+<![CDATA[select *
+from (select ROWNUM rn, D.DIARY_SEQ,
+D.DIARY_TITLE, to_char(D.DIARY_REG_DAY, 'yyyy.mm.dd') DIARY_REG_DAY, D.DIARY_LIKE, D.DIARY_COUNT,
+D.DIARY_OPEN, M.MEMBER_NICKNAME, M.MEMBER_SEQ  
+from MEMBER M join DIARY D on M.MEMBER_SEQ = D.MEMBER_SEQ 
+where M.member_seq = #{memberSeq}) where rn between #{rowStart} and #{rowEnd}
+]]>
+	</select>
+
+
+
+	<select id="diaryDetail" parameterType="Long" resultType="com.group.exam.diary.command.DiaryListCommand">
+
+
+<![CDATA[select D.DIARY_SEQ, D.DIARY_TITLE, to_char(D.DIARY_REG_DAY, 'yyyy.mm.dd') DIARY_REG_DAY,D.DIARY_LIKE, D.DIARY_COUNT, D.DIARY_CONTENT, D.DIARY_OPEN, 
+M.MEMBER_NICKNAME, M.MEMBER_SEQ, D.DIARY_IMG
+from MEMBER M join DIARY D on M.MEMBER_SEQ = D.MEMBER_SEQ where D.DIARY_SEQ = #{diarySeq}]]>
+
+	</select>
+
+	<!-- diary 조회수 up -->
+	<update id="diaryCountup" parameterType="Long">
+		update DIARY set
+		DIARY_COUNT = DIARY_COUNT+1 where DIARY_SEQ = #{diarySeq}
+	</update>
+	
+	<!-- 내가 쓴 글 수 -->
+	<select id="diaryListCount" parameterType="Long" resultType="Integer">
+		select count(*) from
+		DIARY where MEMBER_SEQ = #{memberSeq}
+	</select>
+
+
+	<select id="diaryNickname" parameterType="Long" resultType="String">
+		select MEMBER_NICKNAME from MEMBER where MEMBER_SEQ = #{memberSeq}
+	</select>
+
+	<!-- 좋아요 -->
+
+	<insert id="createLikeDiary" parameterType="com.group.exam.diary.vo.DiaryHeartVo">
+		insert into DIARYHEART (DHEART_SEQ, DIARY_SEQ, MEMBER_SEQ) values (DH_SEQ.NEXTVAL, #{diarySeq}, #{memberSeq})
+
+	</insert>
+
+	<delete id="deleteLikeDiary" parameterType="com.group.exam.diary.vo.DiaryHeartVo">
+		delete from DIARYHEART where DIARY_SEQ = #{diarySeq} and MEMBER_SEQ = #{memberSeq} 
+	</delete>
+
+
+	<update id="updateLikeDiary" parameterType="com.group.exam.diary.vo.DiaryHeartVo">
+		update DIARY set DIARY_LIKE = (select count(*) from DIARYHEART where DIARY_SEQ = #{diarySeq}) where DIARY_SEQ = #{diarySeq}
+	</update>
+
+	<select id="getLikeDiary" parameterType="com.group.exam.diary.vo.DiaryHeartVo" resultType="Integer">
+		select count(DHEART_SEQ) from DIARYHEART where DIARY_SEQ = #{diarySeq} and MEMBER_SEQ = #{memberSeq}
+	</select>
+
+</mapper>

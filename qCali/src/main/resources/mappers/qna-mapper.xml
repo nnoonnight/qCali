@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+
+<mapper namespace="QnaDao">
+	<insert id="qnaInsert">
+		INSERT INTO qna(qna_seq, qna_root, qna_title,
+		qna_content, qna_writer, qna_filename, qna_filepath, member_seq)
+		values(qna_seq.nextval, qna_seq.currval, #{qnaTitle}, #{qnaContent},
+		#{qnaWriter,jdbcType=VARCHAR},
+		#{qnaFileName}, #{qnaFilePath, jdbcType=VARCHAR}, #{memberSeq})
+	</insert>
+
+	<select id="qnaList" resultType="qnaVo"
+		parameterType="com.group.exam.utils.Criteria">
+		SELECT qna.qna_no,qna.qna_seq , qna.qna_title,
+			qna.qna_content, qna.qna_writer,qna.qna_readcnt,
+			qna.qna_filename, qna.qna_filepath, qna.qna_root, qna.qna_step, qna.qna_indent,
+			qna.member_seq,
+			to_char(qna.qna_reg_day,'yyyy.mm.dd') qna_reg_day, m.member_nickname 
+		FROM
+			(SELECT ROWNUM qna_no, qna.* FROM
+				(SELECT * FROM qna
+				ORDER BY qna_root, qna_step DESC)
+			qna ORDER BY qna_no DESC)qna left join member m on m.member_seq =
+			qna.member_seq
+			where qna_no between #{rowStart} and #{rowEnd}
+	</select>
+
+
+
+	<select id="qnaDetail" resultType="qnaVo">
+		select q.*, m.member_nickname
+		from qna q
+		left join member m on q.member_seq = m.member_seq
+		where QNA_SEQ = #{qnaSeq}
+	</select>
+
+	<update id="qnaUpdate">
+		UPDATE qna SET QNA_TITLE = #{qnaTitle}, QNA_CONTENT =
+		#{qnaContent},
+		QNA_FILENAME =#{qnaFileName, jdbcType =VARCHAR}, QNA_FILEPATH = #{qnaFilePath,
+		jdbcType=VARCHAR}
+		where QNA_SEQ = #{qnaSeq}
+	</update>
+
+	<update id="qnaDelete" parameterType="Long">
+		UPDATE qna set QNA_TITLE =
+		'none', QNA_CONTENT = 'none'
+		 where QNA_SEQ = #{qnaSeq}
+	</update>
+
+	<update id="qnaReadCount" parameterType="Long">
+		update qna set QNA_READCNT = QNA_READCNT + 1 where QNA_SEQ = #{qnaSeq}
+	</update>
+
+	<select id="qnaTotalList" resultType="Integer">
+		select count(*) FROM QNA
+	</select>
+
+	<insert id="qnaReplyInsert">
+		<![CDATA[ {
+		CALL DECLARE BEGIN 
+		UPDATE qna SET qna_step = qna_step + 1 
+			WHERE qna_root = #{qnaRoot } AND qna_step > #{qnaStep };
+		 
+		INSERT INTO qna 
+			(qna_seq, qna_root, qna_title, qna_content, qna_writer, qna_step, qna_indent, qna_filename, qna_filepath)
+		 VALUES (qna_seq.NEXTVAL, #{qnaRoot },
+		 	#{qnaTitle }, #{qnaContent }, #{qnaWriter} , #{qnaStep } + 1, 
+		 	#{qnaIndent } + 1, #{qnaFileName, jdbcType=VARCHAR },
+			#{qnaFilePath, jdbcType=VARCHAR }); END} ]]>
+	</insert>
+</mapper>

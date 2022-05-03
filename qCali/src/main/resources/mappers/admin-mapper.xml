@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+
+<mapper namespace="AdminDao">
+
+	<select id="selectByaId" parameterType="String" resultType="adminVo">
+	<![CDATA[SELECT ADMIN_SEQ, 
+	ADMIN_ID, 
+	ADMIN_PASSWORD, 
+	ADMIN_NICKNAME
+	FROM ADMIN WHERE admin_id = #{adminId}
+	]]>
+	</select>
+	
+	<select id="selectMember" parameterType="com.group.exam.utils.Criteria" resultType="com.group.exam.member.vo.MemberVo">
+	<![CDATA[
+	
+	select * from (
+	SELECT ROWNUM as rn, MEMBER_SEQ,
+	
+		MEMBER_ID,
+		MEMBER_NICKNAME,
+		TO_CHAR(MEMBER_REG_DAY,'yyyy.mm.dd') MEMBER_REG_DAY,
+		TO_CHAR(MEMBER_BIRTH_DAY, 'yyyy.mm.dd') MEMBER_BIRTH_DAY,
+		MEMBER_AUTH,
+		MEMBER_LEVEL
+
+	FROM MEMBER )
+	where rn between #{rowStart} and #{rowEnd}
+	
+	]]>
+	</select>
+	<delete id="memberDelete" parameterType="Long">
+		DELETE FROM MEMBER WHERE MEMBER_SEQ = #{memberSeq}
+	</delete>
+	<update id="questionApprove" parameterType="Long">
+		UPDATE QUESTION SET QUESTION_STATUS = 'T' WHERE QUESTION_SEQ = #{questionSeq}
+	</update>
+	<delete id="questionDelete" parameterType="Long">
+		DELETE FROM QUESTION WHERE QUESTION_SEQ = #{questionSeq}
+	</delete>
+	<select id="countQuestionList" resultType="Integer">
+		<![CDATA[
+			select count(*) FROM question where QUESTION_STATUS = 'T'
+		]]>
+	</select>
+	<select id="questionList" parameterType="com.group.exam.utils.Criteria" resultType="com.group.exam.admin.command.AdminQuestionMember">
+		<![CDATA[
+		select * from 
+		(select ROWNUM as no, Q.QUESTION_SEQ, Q.QUESTION_CONTENT, M.MEMBER_NICKNAME
+		from MEMBER M
+		right join
+		QUESTION Q
+		on
+		M.MEMBER_SEQ = Q.MEMBER_SEQ
+		where Q.QUESTION_STATUS = 'F')
+		where no between #{rowStart} and #{rowEnd}
+		ORDER BY QUESTION_SEQ 
+		 ]]>
+	</select>
+	<select id="questionListAll" parameterType="com.group.exam.utils.Criteria" 
+	resultType="com.group.exam.admin.command.AdminQuestionMember">
+		<![CDATA[
+		select * from
+		(select rownum as no, question_seq, question_content, member_nickname, member_seq from
+		(select Q.QUESTION_SEQ, Q.QUESTION_CONTENT, M.MEMBER_NICKNAME, M.MEMBER_SEQ
+		from MEMBER M
+		right join
+		QUESTION Q
+		on
+		M.MEMBER_SEQ = Q.MEMBER_SEQ
+		where Q.QUESTION_STATUS= 'T' order by question_seq)
+		order by rownum)
+		where no between #{rowStart} and #{rowEnd} ]]>
+	</select>
+	
+	<insert id="questionAdd" parameterType="com.group.exam.question.vo.QuestionVo">
+		INSERT INTO QUESTION(QUESTION_SEQ, QUESTION_CONTEN)
+		VALUES (Q_SEQ.nextval, #{questionContent})
+	</insert>
+	
+	<select id="adminboardList" resultType="com.group.exam.admin.command.AdminBoardCommand" parameterType="com.group.exam.utils.Criteria">
+		<![CDATA[
+ 			select * from 
+ 			(select ROWNUM as rn, B.BOARD_SEQ, B.BOARD_TITLE, M.MEMBER_NICKNAME, B.BOARD_COUNT, B.BOARD_LIKE,
+ 			TO_CHAR(B.BOARD_REG_DAY,'yyyy.mm.dd') BOARD_REG_DAY 
+ 			from MEMBER M 
+ 			right join BOARD B 
+ 			on M.MEMBER_SEQ = B.MEMBER_SEQ)
+ 			where rn BETWEEN #{rowStart} and #{rowEnd} 
+			ORDER BY BOARD_SEQ DESC 
+ 		]]> 
+	</select>
+	<select id="countBoardList" resultType="Integer">
+		<![CDATA[
+			select count(*) FROM board 
+		]]>
+	</select>
+	
+	<select id="selectBybseq" parameterType ="Long" resultType="com.group.exam.admin.command.AdminBoardCommand">
+		<![CDATA[
+			select B.BOARD_TITLE , M.MEMBER_NICKNAME ,
+			B.BOARD_COUNT , B.BOARD_LIKE , B.BOARD_CONTENT , Q.QUESTION_CONTENT , 
+			B.BOARD_SEQ, TO_CHAR(B.BOARD_REG_DAY,'yyyy.mm.dd') BOARD_REG_DAY
+			from MEMBER M
+			right join BOARD B on M.MEMBER_SEQ = B.MEMBER_SEQ
+			join QUESTION Q on B.QUESTION_SEQ = Q.QUESTION_SEQ
+			where B.BOARD_SEQ = #{boardSeq}
+		]]>
+	</select>
+	
+	<delete id="boardDelete" parameterType="Long">
+		delete from BOARD where BOARD_SEQ = #{boardSeq}
+	</delete>
+	
+	<select id="memberListTotal" resultType="Integer">
+	<![CDATA[
+		select count(*) FROM MEMBER
+	]]>
+	</select>
+	
+	<select id="questionListTotal" resultType="Integer">
+	select count(*) FROM QUESTION where QUESTION_STATUS = 'F'
+	</select>
+	
+	
+</mapper>

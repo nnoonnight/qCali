@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+
+<mapper namespace="NoticeDao">
+	<select id="noticeSelectAll" resultType="noticeVo" parameterType="com.group.exam.utils.Criteria">
+		select * from 
+		(select rownum, notice_seq, notice_title, to_char(notice_reg_day,'yyyy.mm.dd') notice_reg_day from NOTICE order by NOTICE_SEQ desc)
+		where rownum between #{rowStart} and #{rowEnd}
+	</select>
+	
+	<select id="noticeDetail" parameterType="Long" resultType="noticeVo">
+		select NOTICE_SEQ, NOTICE_TITLE, NOTICE_CONTENT, to_char(notice_reg_day,'yyyy.mm.dd') notice_reg_day from "NOTICE" where "NOTICE_SEQ" = #{noticeSeq}
+	</select>
+	<select id="noticeTotal" resultType="Integer">
+		select count(*) from NOTICE
+	</select>
+	
+	<insert id="noticeInsert" parameterType="noticeVo">
+		insert into NOTICE
+		(notice_seq, notice_title, notice_content, notice_reg_day, admin_seq) values
+		(n_seq.nextval, #{noticeTitle}, #{noticeContent}, sysdate, 0)
+	</insert>
+	
+	<update id="noticeUpdate" parameterType="HashMap">
+		update NOTICE
+		set notice_title=#{noticeTitle}, notice_content=#{noticeContent} where NOTICE_SEQ = #{noticeSeq}
+	</update>
+	
+	<delete id="noticeDelete" parameterType="Long">
+		delete from "NOTICE" where notice_seq=#{noticeSeq}
+	</delete>
+	
+
+</mapper>

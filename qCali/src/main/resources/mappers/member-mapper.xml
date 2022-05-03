@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="MemberDao">
+
+	<!-- 로그인 관련 -->
+	<select id="memberlogin" parameterType="String"
+		resultType="com.group.exam.member.command.LoginCommand">
+		select MEMBER_SEQ, MEMBER_ID
+		, MEMBER_NICKNAME,
+		to_char(MEMBER_BIRTH_DAY, 'mm.dd') MEMBER_BIRTH_DAY,
+		to_char(MEMBER_REG_DAY, 'yyyy.mm.dd') MEMBER_REG_DAY, MEMBER_AUTH,
+		MEMBER_LEVEL, NAVER, KAKAO from MEMBER where MEMBER_ID = #{memberId}
+	</select>
+
+
+	<!-- 비밀번호 찾기 관련 -->
+	<select id="findPwd" parameterType="String"
+		resultType="com.group.exam.member.command.LoginCommand">
+		select member_password, member_bpw from MEMBER where
+		MEMBER_ID = #{memberId}
+	</select>
+
+	<update id="updateTmpPwd" parameterType="HashMap">
+		update MEMBER set
+		MEMBER_PASSWORD = #{tmpPwd} where MEMBER_ID = #{memberId}
+	</update>
+
+
+	<!-- 회원가입 관련 -->
+
+	<insert id="memberInsert" parameterType="com.group.exam.member.command.InsertCommand">
+		INSERT INTO member
+		(member_seq, member_id, member_password, member_bpw, member_nickname,
+		member_birth_day, member_reg_day)
+		VALUES
+		(m_seq.nextval, #{memberId},
+		#{memberPassword}, #{memberPassword}, #{memberNickname},
+		to_date(#{memberBirthDay}, 'mm-dd'), SYSDATE)
+	</insert>
+
+	<update id="updateApiStatus" parameterType="HashMap">
+
+		update MEMBER set ${api} = 'T', member_auth = 'T' where member_seq =
+		#{memberSeq}
+
+	</update>
+
+	<select id="idDup" parameterType="String" resultType="Integer">
+
+
+		SELECT
+		COUNT(*) FROM member WHERE member_id = #{memberId}
+
+	</select>
+
+	<select id="nicknameDup" parameterType="String"
+		resultType="Integer">
+
+		SELECT COUNT(*) FROM member WHERE member_nickname =
+		#{memberNickname}
+
+	</select>
+
+	<update id="updateAuthkey" parameterType="memberVo">
+		UPDATE
+		member SET
+		member_authkey = #{memberAuthkey} WHERE member_id = #{memberId}
+	</update>
+
+	<update id="updateAuth" parameterType="memberVo">
+		UPDATE member
+		SET
+		member_auth = #{memberAuth} WHERE member_authkey = #{memberAuthkey}
+	</update>
+
+	<!-- 회원 정보 변경 관련 -->
+	<update id="updateMemberPwd" parameterType="HashMap">
+		UPDATE
+		member SET
+		MEMBER_PASSWORD = #{memberPassword}, MEMBER_BPW = #{memberPassword}
+		WHERE member_seq = #{memberSeq}
+	</update>
+
+	<update id="updateMemberNickname" parameterType="HashMap">
+		UPDATE member
+		SET MEMBER_NICKNAME = #{memberNickname} WHERE member_seq =
+		#{memberSeq}
+	</update>
+
+	<delete id="deleteMember">
+		DELETE MEMBER WHERE
+		MEMBER_SEQ = #{memberSeq}
+	</delete>
+
+	<!-- 회원 질문 등록 -->
+	<insert id="memberQuestionAdd" parameterType="HashMap">
+		INSERT INTO
+		QUESTION(QUESTION_SEQ, QUESTION_CONTENT, MEMBER_SEQ)
+		VALUES
+		(Q_SEQ.nextval, #{questionContent}, #{memberSeq})
+	</insert>
+
+	<!-- 멤버 AUTH 상태 확인 -->
+	<select id="memberAuth" resultType="String">
+		select MEMBER_AUTH from
+		MEMBER where MEMBER_SEQ = #{memberSeq}
+
+	</select>
+
+	<!-- popup으로 띄울 member정보 -->
+	<select id="memberInfo" parameterType="Long" resultType="com.group.exam.member.command.MemberInfoCommand">
+		select member_seq, member_id, member_nickname, to_char(member_reg_day,'yyyy-mm-dd') member_reg_day ,
+		to_char(member_birth_day,'yyyy-mm-dd') member_birth_day, member_level	
+		from member where member_seq = #{memberSeq}
+	</select>
+
+
+</mapper>
