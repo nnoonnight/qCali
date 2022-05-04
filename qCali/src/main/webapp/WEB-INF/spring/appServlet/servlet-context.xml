@@ -67,8 +67,8 @@
 		<beans:property name="host" value="smtp.gmail.com" />
 		<beans:property name="port" value="587" />
 		<beans:property name="username"
-			value="구글아이디" />
-		<beans:property name="password" value="구글비번" />
+			value="test@gamil.com" /> <!-- 구글아이디 -->
+		<beans:property name="password" value="test" /> <!-- 구글비번 -->
 		<beans:property name="javaMailProperties">
 			<beans:props>
 				<beans:prop key="mail.transport.protocol">smtp</beans:prop>

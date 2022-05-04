@@ -1,15 +1,12 @@
 package com.group.exam.diary.controller;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
-import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -215,7 +212,11 @@ public class DiaryController {
 
 		model.addAttribute("diaryHeart", diarylike);
 		System.out.println(list);
-		return "diary/detail";
+		if (loginMember.getMemberSeq() != list.getMemberSeq() && list.getDiaryOpen().equals("F")) { //내글이 아니고 비공개라면
+			return "errors/memberAuthErrorDiary";
+		}else {
+			return "diary/detail";
+		}
 
 	}
 
@@ -284,26 +285,35 @@ public class DiaryController {
 			String diaryOpen = request.getParameter("open");
 			updateCommand.setDiaryOpen(diaryOpen);
 
+
 			// 첨부파일 세팅
 			MultipartFile file = updateCommand.getImg();
 
-			// 파일명
-			String originalFileName = file.getOriginalFilename();
+			
+//			// 파일명
+//			String originalFileName = file.getOriginalFilename();
+//
+//			// 파일명 중 확장자만 추출
+//			String originalFileExtension = FilenameUtils.getExtension(originalFileName); // 확장자 구하기
+//
+//			// 저장할때 쓸 파일명 랜덤생성 + 확장자
+//			String storedFileName = UUID.randomUUID().toString().replaceAll("-", "") + "." + originalFileExtension;
+//
+//			// 파일 저장을 위한 File 객체
+//			String rootPath = request.getSession().getServletContext().getRealPath("/");
+//
+//			String attachPath = "resources/upload/";
+//			file.transferTo(new File(rootPath + attachPath + storedFileName));
+//
+//			updateCommand.setDiaryImg(storedFileName); // 저장할 파일 (랜덤생성된)이름을 vo에 셋팅
 
-			// 파일명 중 확장자만 추출
-			String originalFileExtension = FilenameUtils.getExtension(originalFileName); // 확장자 구하기
 
-			// 저장할때 쓸 파일명 랜덤생성 + 확장자
-			String storedFileName = UUID.randomUUID().toString().replaceAll("-", "") + "." + originalFileExtension;
-
-			// 파일 저장을 위한 File 객체
-			String rootPath = request.getSession().getServletContext().getRealPath("/");
-
-			String attachPath = "resources/upload/";
-			file.transferTo(new File(rootPath + attachPath + storedFileName));
-
-			updateCommand.setDiaryImg(storedFileName); // 저장할 파일 (랜덤생성된)이름을 vo에 셋팅
-
+			if (!file.isEmpty()) {
+				updateCommand.setDiaryImg(diaryService.upload("diary", file, session));
+			} else {
+				updateCommand.setDiaryImg(null);
+			}
+			
 			diaryService.updateDiary(updateCommand.getDiaryTitle(), updateCommand.getDiaryContent(), diarySeq,
 					updateCommand.getDiaryOpen(), updateCommand.getDiaryImg());
 

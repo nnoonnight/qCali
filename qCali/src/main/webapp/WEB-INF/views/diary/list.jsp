@@ -20,6 +20,12 @@ li {
 	float: left;
 	margin-left: 5px;
 }
+thead {
+	display: table-header-group;
+	vertical-align: middle;
+	border-color: inherit;
+	background: #e9ecef;
+}
 </style>
 
 <title>Insert title here</title>
@@ -39,20 +45,21 @@ li {
 		</c:if>
 	</c:if>
 
-	게시글 수 : ${diaryTotal }
 	<h3>${diaryNickname} 님의 일기장</h3>
+	등록된 일기 수 : ${diaryTotal }
 
-	<table class="table">
+	<table class="table table-hover">
+		<thead>
 		<tr>
-			<th>NO</th>
-			<th>일기제목</th>
+			<th>글번호</th>
+			<th>제목</th>
 			<th>닉네임</th>
-			<th>일기 쓴 날짜</th>
-			<th>일기 좋아요</th>
-			<th>일기 카운트</th>
+			<th>작성일</th>
+			<th>좋아요</th>
+			<th>조회수</th>
 			<th>공개여부</th>
 		</tr>
-
+		</thead>
 	
 		<c:if test="${ empty diaryList}">
 			<tr>
