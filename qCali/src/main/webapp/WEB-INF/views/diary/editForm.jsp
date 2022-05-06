@@ -6,13 +6,21 @@
 <!DOCTYPE html>
 <html>
 <head>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>QCali :: 일기 수정</title>
+<script type="text/javascript"
+	src="<c:url value='/resources/static/js/ckeditor/ckeditor.js'/>"></script>
+
+</head>
 </head>
 <body>
-
+<jsp:include page="/WEB-INF/views/main/header.jsp"></jsp:include>
+<jsp:include page="/WEB-INF/views/main/sidebar_board.jsp"></jsp:include>
+<div class="container">
 	<form:form commandName="DiaryUpdateCommand"  enctype="multipart/form-data">
-		<table border="1" >
+		<table>
 			<tr>
 				<td>제목</td>
 				<td><form:input path="diaryTitle" value="${diaryList.diaryTitle }"/> 
@@ -21,7 +29,8 @@
 			</tr>
 			<tr>
 				<td>내용</td>
-				<td><textarea name="diaryContent">${diaryList.diaryContent}</textarea> 
+				<td><textarea name="diaryContent">${diaryList.diaryContent}</textarea>
+				<script>CKEDITOR.replace('diaryContent');</script> 
 				<form:errors path="diaryContent" /></td>
 
 			</tr>
@@ -29,11 +38,11 @@
 				<td>파일 업로드</td>
 				<td>
 				<c:if test="${ empty diaryList.diaryImg ||  diaryList.diaryImg eq 'deleted'}">
-					<input type="file" name="img">
+					<input class="form-control" type="file" name="img">
 				</c:if>
 				<c:if test="${ !empty diaryList.diaryImg}">
-					<img src="<c:url value='/resources/upload/${diaryList.diaryImg }'/>" width="200" >
-					<input type="file" name="img">
+					<img src="/diaryImg${diaryList.diaryImg }" width="200" >
+					<input class="form-control" type="file" name="img">
 				</c:if>
 
 				</td>
@@ -53,11 +62,15 @@
 				</td>
 
 			</tr>
+			<tr>
+				<td colspan="2" align="right"><input type="submit" value="글쓰기" /></td>
+			</tr>
 		</table>
 
 		
-		<input type="submit" value="글쓰기" />
 	</form:form>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
 
 </body>
 </html>

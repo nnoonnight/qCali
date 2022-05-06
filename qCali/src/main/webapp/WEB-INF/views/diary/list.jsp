@@ -28,36 +28,44 @@ thead {
 }
 </style>
 
-<title>Insert title here</title>
+<title>QCali :: 일기장</title>
 </head>
 <body>
 <jsp:include page="/WEB-INF/views/main/header.jsp"></jsp:include>
 <jsp:include page="/WEB-INF/views/main/sidebar_board.jsp"></jsp:include>
 <div class="container">
-	<c:if test="${!empty memberLogin}">
-		<c:set var ="memberLogin.memberSeq" value="${memberLogin.memberSeq}"/>
-		<c:set var ="testMemberSeq" value="${testMemberSeq}"/>
-		<c:if test="${memberLogin.memberSeq == testMemberSeq}">
-		<a href="<c:url value='/diary/write/${memberLogin.memberSeq}'/>"><button>일기쓰기</button></a>
-		</c:if>
-		<c:if test="${memberLogin.memberSeq != testMemberSeq}">
-		<a href="<c:url value='/diary/list/${memberLogin.memberSeq}'/>"><button>내 일기장 가기</button></a>
-		</c:if>
-	</c:if>
+	<div class="container">
+		<div class="row">
+			<div class="col">
+				<h3>${diaryNickname} 님의 일기장</h3>			
+			</div>
+			<div class="col-2">		
+			<c:if test="${!empty memberLogin}">
+				<c:set var ="memberLogin.memberSeq" value="${memberLogin.memberSeq}"/>
+				<c:set var ="testMemberSeq" value="${testMemberSeq}"/>			
+				<c:if test="${memberLogin.memberSeq == testMemberSeq}">
+					<a href="<c:url value='/diary/write/${memberLogin.memberSeq}'/>"><button class="btn btn-primary">일기쓰기</button></a>
+				</c:if>
+				<c:if test="${memberLogin.memberSeq != testMemberSeq}">
+					<a href="<c:url value='/diary/list/${memberLogin.memberSeq}'/>"><button class="btn btn-primary">내 일기장 가기</button></a>
+				</c:if>
+			</c:if>
+			</div>
+		</div>
+		등록된 일기 수 : ${diaryTotal }
+		</div>
 
-	<h3>${diaryNickname} 님의 일기장</h3>
-	등록된 일기 수 : ${diaryTotal }
 
 	<table class="table table-hover">
 		<thead>
 		<tr>
-			<th>글번호</th>
-			<th>제목</th>
-			<th>닉네임</th>
-			<th>작성일</th>
-			<th>좋아요</th>
-			<th>조회수</th>
-			<th>공개여부</th>
+			<th scope="col">글번호</th>
+			<th scope="col">제목</th>
+			<th scope="col">닉네임</th>
+			<th scope="col">작성일</th>
+			<th scope="col">좋아요</th>
+			<th scope="col">조회수</th>
+			<th scope="col">공개여부</th>
 		</tr>
 		</thead>
 	
@@ -71,7 +79,7 @@ thead {
 			<c:forEach var="list" items="${diaryList}">
 				
 				<tr>
-					<td>${list.rn}</td>
+					<td scope="row">${list.rn}</td>
 						<c:if test="${memberLogin.memberSeq == testMemberSeq}" >
 					<td><a href="<c:url value='/diary/detail?diarySeq=${list.diarySeq}'/>">${list.diaryTitle}</a>
 					</td>
@@ -101,28 +109,27 @@ thead {
 			</c:forEach>
 		</c:if>
 		
+	</table>
+	
 		<div>
 			<ul>
 				<c:if test="${pageMaker.prev }">
 					<li><a
-						href="mylist${pageMaker.makeQuery(pageMaker.startPage - 1) }&memberSeq=${memberLogin.memberSeq}">Previous</a>
+						href="${pageMaker.makeQuery(pageMaker.startPage - 1) }">Previous</a>
 					</li>
 				</c:if>
 				<c:forEach var="currentPage" begin="${pageMaker.startPage }"
 					end="${pageMaker.endPage }">
 					<li><a
-						href="mylist${pageMaker.makeQuery(currentPage) }&memberSeq=${memberLogin.memberSeq}">${currentPage }</a></li>
+						href="${pageMaker.makeQuery(currentPage) }">${currentPage }</a></li>
 				</c:forEach>
 				<c:if test="${pageMaker.next }">
 					<li ><a
-						href="listmy${pageMaker.makeQuery(pageMaker.endPage + 1) }&memberSeq=${memberLogin.memberSeq}'/>">Next</a>
+						href="${pageMaker.makeQuery(pageMaker.endPage + 1) }">Next</a>
 					</li>
 				</c:if>
 			</ul>
 		</div>
-
-
-	</table>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
 </div>
 </body>

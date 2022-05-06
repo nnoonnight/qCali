@@ -21,7 +21,7 @@ li {
 	margin-left: 5px;
 }
 </style>
-<title>QCali :: 일기장</title>
+<title>QCali :: 일기 작성</title>
 <script type="text/javascript"
 	src="<c:url value='/resources/static/js/ckeditor/ckeditor.js'/>"></script>
 
@@ -33,7 +33,7 @@ li {
 
 
 	<form:form commandName="diaryData" enctype="multipart/form-data">
-		<table border="1">
+		<table>
 			<tr>
 				<td>제목</td>
 				<td><form:input path="diaryTitle" /> 
@@ -49,7 +49,7 @@ li {
 			</tr>
 			<tr>
 				<td>파일 업로드</td>
-				<td><input type="file" name="img"></td>
+				<td><input class="form-control" type="file" name="img"></td>
 			</tr>
 			<tr>
 				<td>공개여부</td>
@@ -59,12 +59,13 @@ li {
 				</td>
 
 			</tr>
-			
+			<tr>
+				<td colspan="2" align="right"><input type="submit" value="글쓰기" /></td>
+			</tr>
 		</table>
+				<input type="hidden" name="memberSeq" value="${memberLogin.memberSeq}">
 
 		
-		<input type="hidden" name="memberSeq" value="${memberLogin.memberSeq}">
-		<input type="submit" value="글쓰기" />
 	</form:form>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
 </div>

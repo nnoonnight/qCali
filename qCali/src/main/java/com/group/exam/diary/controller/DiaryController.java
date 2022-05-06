@@ -202,7 +202,12 @@ public class DiaryController {
 
 		model.addAttribute("diaryList", list);
 		model.addAttribute("diarySeq", diarySeq);
-
+		
+		//닉네임 표시용
+		String diaryNickname = diaryService.diaryNickname(list.getMemberSeq());
+		model.addAttribute("diaryNickname", diaryNickname);
+		//
+		
 		DiaryHeartVo likeVo = new DiaryHeartVo();
 
 		likeVo.setDiarySeq(diarySeq);
@@ -211,6 +216,9 @@ public class DiaryController {
 		int diarylike = diaryService.getDiaryLike(likeVo);
 
 		model.addAttribute("diaryHeart", diarylike);
+		
+		
+		
 		System.out.println(list);
 		if (loginMember.getMemberSeq() != list.getMemberSeq() && list.getDiaryOpen().equals("F")) { //내글이 아니고 비공개라면
 			return "errors/memberAuthErrorDiary";
