@@ -44,10 +44,10 @@ thead {
 				<c:set var ="memberLogin.memberSeq" value="${memberLogin.memberSeq}"/>
 				<c:set var ="testMemberSeq" value="${testMemberSeq}"/>			
 				<c:if test="${memberLogin.memberSeq == testMemberSeq}">
-					<a href="<c:url value='/diary/write/${memberLogin.memberSeq}'/>"><button class="btn btn-primary">일기쓰기</button></a>
+					<a href="<c:url value='/diary/write/${memberLogin.memberSeq}'/>"><button class="btn btn-outline-info">일기쓰기</button></a>
 				</c:if>
 				<c:if test="${memberLogin.memberSeq != testMemberSeq}">
-					<a href="<c:url value='/diary/list/${memberLogin.memberSeq}'/>"><button class="btn btn-primary">내 일기장 가기</button></a>
+					<a href="<c:url value='/diary/list/${memberLogin.memberSeq}'/>"><button class="btn btn-outline-info">내 일기장 가기</button></a>
 				</c:if>
 			</c:if>
 			</div>

@@ -63,7 +63,7 @@
 
 			</tr>
 			<tr>
-				<td colspan="2" align="right"><input type="submit" value="글쓰기" /></td>
+				<td colspan="2" align="right"><input type="submit" value="글쓰기" class="btn btn-outline-info"/></td>
 			</tr>
 		</table>
 

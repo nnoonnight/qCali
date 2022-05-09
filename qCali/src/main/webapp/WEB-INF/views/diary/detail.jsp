@@ -7,6 +7,9 @@
 <!DOCTYPE html>
 <html>
 <head>
+<style>
+p { text-align: center; }
+</style>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
 
 <meta charset="UTF-8">
@@ -49,19 +52,7 @@
 				</div>
 			</td>
 		</tr>	
-		<c:if test="${!empty diaryList.diaryImg }"> <!-- 이미지 있으면 -->
-		<tr>
-			<td colspan="6"><img src="/diaryImg${diaryList.diaryImg }" width="200" ></td>			
-		</tr>
-		</c:if>
-<%-- 		<c:if test="${empty diaryList.diaryImg }">
-		<tr>
-			<td>	</td>
-		</tr>
-		</c:if> --%>
-		<tr>
-			<th>일기내용</th><td>${diaryList.diaryContent}</td>
-		</tr>
+
 	</thead>
 		
 
@@ -72,13 +63,13 @@
 		<c:if test="${myArticle == true}">
 		<div class="col-2">
 			<a href="<c:url value='/diary/edit/${diaryList.diarySeq}'/>">
-			<button class="btn btn-primary">일기 수정</button></a>
+			<button class="btn btn-outline-info">일기 수정</button></a>
 		</div>
 		<div class="col-2">
-			<button class="btn btn-primary" onclick="delete_button()">일기 삭제</button>
+			<button class="btn btn-outline-info" onclick="delete_button()">일기 삭제</button>
 		</div>
 		<div class="col-2">	
-			<button class="btn btn-primary" onclick="deleteImg_button()">첨부파일 삭제</button>
+			<button class="btn btn-outline-info" onclick="deleteImg_button()">첨부파일 삭제</button>
 		</div>	
 
 			</c:if>
@@ -87,7 +78,7 @@
 				<c:set var ="memberLogin.memberSeq" value="${memberLogin.memberSeq}"/>
 				<c:set var ="testMemberSeq" value="${testMemberSeq}"/>							
 				<c:if test="${memberLogin.memberSeq != testMemberSeq}">
-					<a href="<c:url value='/diary/list/${memberLogin.memberSeq}'/>"><button class="btn btn-primary">내 일기장 가기</button></a>
+					<a href="<c:url value='/diary/list/${memberLogin.memberSeq}'/>"><button class="btn btn-outline-info">내 일기장 가기</button></a>
 				</c:if>
 			</c:if>
 		</div>
@@ -98,6 +89,22 @@
 
 
 	</table>
+	
+			<p>
+		<c:if test="${!empty diaryList.diaryImg }"> <!-- 이미지 있으면 -->
+		
+			<img src="/diaryImg${diaryList.diaryImg }" width="200">		
+		
+		</c:if>
+		</p>
+<%-- 		<c:if test="${empty diaryList.diaryImg }">
+		<tr>
+			<td>	</td>
+		</tr>
+		</c:if> --%>
+		<p>
+			${diaryList.diaryContent}
+		</p>
 	</div>
 	
 	<script src="https://code.jquery.com/jquery-3.6.0.js"></script>
