@@ -21,6 +21,29 @@ li {
 	float: left;
 	margin-left: 5px;
 }
+
+        table.table2{
+                border-collapse: separate;
+                border-spacing: 1px;
+                text-align: left;
+                line-height: 1.5;
+                border-top: 1px solid #ccc;
+                margin : 20px 10px;
+        }
+        table.table2 tr {
+                 width: 50px;
+                 padding: 10px;
+                font-weight: bold;
+                vertical-align: top;
+                border-bottom: 1px solid #ccc;
+        }
+        table.table2 td {
+                 width: 100px;
+                 padding: 10px;
+                 vertical-align: top;
+                 border-bottom: 1px solid #ccc;
+        }
+
 </style>
 <title>QCali :: 일기 작성</title>
 <script type="text/javascript"
@@ -30,14 +53,14 @@ li {
 <body>
 <jsp:include page="/WEB-INF/views/main/header.jsp"></jsp:include>
 <jsp:include page="/WEB-INF/views/main/sidebar_board.jsp"></jsp:include>
-<div class="container">
+<div class="container" style="text-align:center;">
 
 
 	<form:form commandName="diaryData" enctype="multipart/form-data">
-		<table>
+		<table style=" width:70%; border:0;" class = "table2">
 			<tr>
 				<td>제목</td>
-				<td><form:input path="diaryTitle" /> 
+				<td><form:input path="diaryTitle" size="30"/> 
 				<form:errors path="diaryTitle" /></td>
 
 			</tr>
@@ -49,13 +72,13 @@ li {
 
 			</tr>
 			<tr>
-				<td>파일 업로드</td>
+				<td>이미지 업로드</td>
 				<td><input class="form-control" type="file" name="img"></td>
 			</tr>
 			<tr>
 				<td>공개여부</td>
 				<td>
-					<input type="radio" name="open" value="T" checked/>공개 
+					<input type="radio" name="open" value="T" checked/>공개 &nbsp;&nbsp;
 					<input type="radio" name="open" value="F" />비공개				
 				</td>
 
